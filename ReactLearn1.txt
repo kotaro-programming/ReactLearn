@@ -1,0 +1,68 @@
+Reactってなに
+・UI（画面）を部品=コンポーネントで組み立てるためのライブラリ
+・「状態（state）」というデータが変わると、必要な所だけ画面を描き直す
+・HTMLに似たJSXという書き方を使って、JavaScriptの中にUIを表現する
+
+・SPA（ページ遷移の少ないアプリ）や、入力フォームが多いダッシュボード、検索
+フィルタ、ソートなど動くUIを作るときに強い
+・既存のHTML/CSS/JSにも後から少しずつ導入できる
+
+基本のキーワード
+・コンポーネント：見た目+振る舞いをひとまとまりにした”部品"(関数として書くのが主流)
+・JSX：<div>こんにちは</div>のようにHTMLっぽく書ける文法（{}でJS式を書ける）。
+・props：親→子へ渡す"引数"。コンポーネントの入力。
+・state：コンポーネントの"内部の変化する値"。useStateで作る。
+・イベント：onClickなどでボタンクリック時の処理を書く。
+・リストとkey：array.map()で並べる時、keyは要素を一意に識別するために必須。
+
+新規プロジェクト作成
+npm create vite@latest my-react-app -- --template react-ts
+
+新規プロジェクトに移動
+cd my-react-app
+
+依存インストール＆起動
+npm install
+npm run dev
+
+TypeScriptでReactに入門するチュートリアル
+https://qiita.com/yonetty/items/012be4c5c6258a609e35
+
+スターターコードを確認
+スターターコードではコンポーネントのひな型が用意してあり、ウィンドウ下部のペインには
+単純な（動作しない）画面が表示されている
+
+コードを見てみると、以下の４つのReactコンポーネントがあることがわかる。
+コンポーネントとは、UIを組み立てるための、小さく独立した部品を指す
+
+コンポーネント
+・Detail(入力用の明細)
+・Summary(合計を表示)
+・AdmissionFeeCalculator(明細、合計をまとめたもの)
+・APP(最上位のコンポーネント)
+
+Summaryコードの確認
+class Summary extends React.Component {
+  render() {
+    return (
+      <div>
+        <div className="party">
+          <input type="text" className="party" value="0" />
+          <span>名様</span>
+        </div>
+        <div className="total-amount">
+          <span>合計</span>
+          <input type="text" className="total-amount" value="0" />
+          <span>円</span>
+        </div>
+      </div>
+    );
+  }
+}
+
+コンポーネントはReact.Componentを継承したクラスとして作成し、Renderメソッドを実装する。
+Renderメソッドでは、JSXと呼ばれる構文で記述したDOMの表現を返却する。
+JSXは基本的にHTMLの構文で記述することができるが、以下の点に注意する
+・最上位の要素は１つでなければならない（コードサンプルではdiv要素）
+・class属性はTypeScriptの予約語と重複するため、classNameと書く必要がある
+・label要素のfor属性はhtmlForと書く、等
