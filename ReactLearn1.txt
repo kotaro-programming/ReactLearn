@@ -18,12 +18,79 @@ Reactってなに
 新規プロジェクト作成
 npm create vite@latest my-react-app -- --template react-ts
 
+viteがTypeScript+React用の最小プロジェクトを丸ごと作成。
+中身の構成
+my-react-app/
+├─ .gitignore
+├─ index.html
+├─ package.json
+├─ tsconfig.json
+├─ tsconfig.node.json
+├─ vite.config.ts
+├─ public/
+│   └─ vite.svg                # そのまま配信される静的ファイル置き場
+└─ src/
+    ├─ App.tsx                 # 最初に表示されるReactコンポーネント
+    ├─ main.tsx                # Reactを #root にマウントする起点
+    ├─ index.css               # 全体CSS（テンプレにより存在）
+    └─ assets/
+        └─ react.svg           # サンプル画像
+
+主要ファイルの役割
+・index.html
+　一枚だけの土台HTML。<div id="root"></div>があり、Reactはここに差し込まれる
+　下部でsrc/main.tsxをES Modulesで読み込む。
+・src/main.tsx
+　画面の"最初の部品"。ここを書き換えると表示が変わる（HMRで即反映）。
+・vite.config.ts
+　Viteの設定。React用プログインが有効化されている。
+・tsconfig.json/tsconfig.node.json
+　TypeScriptのコンパイル設定。React向けにjsx: "react-jsx"などが入っており、"strict: trueで型を厳格にチェックする。
+・public/
+　ビルドせずにそのまま配置したいファイル（画像やアイコン等）を置く場所。
+・gitgnore
+　Gitで追跡しないものが最初から設定されている。
+・package.json
+　依存パッケージとスクリプト。最初は宣言だけで、まだnode_modules/はない（次のnpm installで入る）
+
+ここまでは雛形ができた状態。まだ依存パッケージ本体は入っていない。
+　
+
 新規プロジェクトに移動
 cd my-react-app
 
 依存インストール＆起動
 npm install
 npm run dev
+
+npm installで作られるもの・起きること
+package.jsonに宣言された依存を実体としてインストールする。
+・node_modules/(新規作成)
+　実際のライブラリ（React,react-dom,vite,typescript,型定義など）が全部ここに入る。
+　巨大になるが手で触らない
+・package-lock.json（新規作成or更新）
+　依存の確定版のバージョン表。チームで同じ環境を再現するためにGitでコミットする。
+・以降の実行が可能に：
+　・npm run dev 開発サーバ（HMRA）
+　・npm run build 本番ビルド（dist/が作成）
+　・npm run preview ビルド結果のローカル確認
+dist/はnpm run buildを実行したときに初めて作られる。npm installではできない
+
+触るべき場所vs触らない場所（最初の判断基準）
+よく触る：src/（App.tsx, main.tsx, CSS など）
+たまに触る：index.html（メタタグやフォント追加など）、vite.config.ts（別名インポート等）
+時々見る：package.json（スクリプト追加、依存追加時）
+触らない：node_modules/（自動生成・削除OK・Gitに入れない）
+
+よく使う移動パターン(cd)
+cd path/to/dir   # 指定ディレクトリへ移動（相対パス）
+cd /abs/path     # 絶対パスで移動
+cd ..            # 1つ上の階層へ
+cd ../..         # 2つ上へ
+cd ~             # ホームへ（= /Users/impudentlife）
+cd -             # 直前にいた場所へ戻る（トグル）
+cd               # 引数なしもホームへ
+
 
 TypeScriptでReactに入門するチュートリアル
 https://qiita.com/yonetty/items/012be4c5c6258a609e35
