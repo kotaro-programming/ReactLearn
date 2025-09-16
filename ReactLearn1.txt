@@ -1,3 +1,6 @@
+ReactLearn リポジトリ
+https://github.com/kotaro-programming/ReactLearn
+
 Reactってなに
 ・UI（画面）を部品=コンポーネントで組み立てるためのライブラリ
 ・「状態（state）」というデータが変わると、必要な所だけ画面を描き直す
@@ -90,6 +93,48 @@ cd ../..         # 2つ上へ
 cd ~             # ホームへ（= /Users/impudentlife）
 cd -             # 直前にいた場所へ戻る（トグル）
 cd               # 引数なしもホームへ
+
+
+
+全体の流れ
+1.画面の入り口を知る → src/App.tsxを編集
+2.部品化の第一歩 → コンポーネントを作る/propsで受け渡す
+3.ユーザー操作に反応 → stateとイベント
+4.少し実用的に → リスト表示・フォーム(controlled input)
+5.役割分担 → ファイル分割/カスタムフック
+
+Djangoのbase.htmlに対して、子テンプレートを追加していくように、
+ReactのApp.tsxに対して、子コンポーネントをimportして組み込んでいく
+(テンプレート継承ではなく、コンポーネントの組み合わせ)
+
+1 入り口:App.tsxを自分の画面にする
+src/App.tsxを丸ごと置き換え
+import { useState } from "react";
+
+export default function App() {
+  const [count, setCount] = useState(0);
+
+  return (
+    <main style={{ fontFamily: "system-ui", padding: 24 }}>
+      <h1>はじめての React（TypeScript）</h1>
+      <p>カウント: {count}</p>
+      <button onClick={() => setCount((v) => v + 1)}>+1</button>
+    </main>
+  );
+}
+
+2.コンポーネント化:部品を作って組み合わせる
+src/components/Greeting.tsx を新規作成
+type GreetingProps = {name: string};
+
+export default function Greeting({ name }: GreetingProps){
+    return <p>こんにちは、{name} さん！</p>;
+}
+
+App.tsx から使う
+
+
+
 
 
 TypeScriptでReactに入門するチュートリアル
