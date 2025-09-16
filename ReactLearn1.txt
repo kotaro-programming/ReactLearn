@@ -132,6 +132,19 @@ export default function Greeting({ name }: GreetingProps){
 }
 
 App.tsx から使う
+// src/App.tsx（一部抜粋）
+import Greeting from "./components/Greeting";
+
+export default function App() {
+  // ...（countのコードはそのままでもOK）
+  return (
+    <main style={{ fontFamily: "system-ui", padding: 24 }}>
+      <h1>部品化の第一歩</h1>
+      <Greeting name="太郎" />
+    </main>
+  );
+}
+Greetingが<p>こんにちは、太郎さん!</p>として描画される。
 
 
 
