@@ -146,6 +146,70 @@ export default function App() {
 }
 Greetingが<p>こんにちは、太郎さん!</p>として描画される。
 
+型エイリアス（TypeScriptの型に名前をつけている宣言）
+Type GreetingProps= { name: string }
+変数との違い
+・let/constは値を持つ"変数"を作る（実行時にも存在）
+・typeは型にラベルを付けるだけで、実行時には存在しない（型はコンパイル時だけ使われ、JSに変換されると消える＝消去型）
+つまり GreetingProps は「こういう形のオブジェクトですよ」という設計図の名前。値ではないので、GreetingProps = {...} のように代入はできない
+
+export defaultとは
+メソッドを外部から読み込めるようにする（メソッドそのものの挙動は変わらない）
+
+3.propsでデータを渡す
+・すでにGreetingでnameを受け取っている({ name }: Props)
+・親側で値を変えれば子の表示が変わる
+App.tsxで<Greeting name="花子" />に変更して保存→表示が変わる
+propsとは？
+・propertiesの略
+・**コンポーネントに渡す「引数」のようなもの
+・Reactでは「親→子」にデータを渡す仕組みとして使う。
+propsの特徴
+・読み取り専用（子コンポーネントの中で書き換えない）
+・親が変えると子も再描画されう（UIが自動更新）
+・いくつでも渡せる（オブジェクトだから）
+
+propsとstateの違い
+・props：外から渡される値（親から子への入力、変えられない）
+・state：コンポーネント自身が持つ内部データ（変わるたびにUI更新）
+
+4.stateとイベントでUIを動かす
+Reactの強みは「状態によるUI制御」クリック・入力に反応できることが最重要
+
+// src/components/Counter.tsx
+import { useState } from "react";
+
+export default function Counter() {
+  const [value, setValue] = useState(0);
+  return (
+    <div style={{ display: "inline-flex", gap: 8, alignItems: "center" }}>
+      <button onClick={() => setValue((v) => v - 1)}>-</button>
+      <strong>{value}</strong>
+      <button onClick={() => setValue((v) => v + 1)}>+</button>
+    </div>
+  );
+}
+
+// src/App.tsx
+import { useState } from "react";
+import Greeting from "./components/Greeting";
+import Counter from "./components/Counter";
+
+export default function App() {
+  return (
+    <main style={{ fontFamily: "system-ui", padding: 24 }}>
+      <h1>併存デモ</h1>
+      <Greeting name="太郎" />   {/* ← props を使う例 */}
+      <Counter />                {/* ← props を使わない例 */}
+    </main>
+  );
+}
+・Counterが自分の内部状態（value）を持ち、ボタン操作でUIが変わる
+
+import { useState } from "react"とは
+Reactが提供する”フック＝useStateを、このファイルで使うための読み込み。
+・useStateを読み込む（React本体のパッケージ"react"から）
+・そのファイル内で状態（state）を持ちたいときに使う。
 
 
 
