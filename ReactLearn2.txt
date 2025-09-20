@@ -1,0 +1,183 @@
+Reactでの配置
+
+レイアウトや配置は基本的に"ふつうのCSS"で行います。
+ReactはUIを部品化して組み立てる担当で、見た目の指定はCSSで行う。
+
+ReactではHTMLの代わりにClassNameを使う
+例
+// App.tsx
+export default function App() {
+  return (
+    <div className="page">
+      <header className="header">ヘッダー</header>
+      <div className="body">
+        <aside className="sidebar">サイド</aside>
+        <main className="main">メイン</main>
+      </div>
+    </div>
+  );
+}
+
+小さな実用アプリを作る
+Step0: 最小の骨組みを置く
+
+TodoApp.tsxを作成
+cd src/components
+touch TodoApp.tsx
+
+// src/components/TodoApp.tsx
+export default function TodoApp() {
+  return (
+    <section style={{ marginTop: 24 }}>
+      <h2>ToDo</h2>
+      <div>
+        <input placeholder="やることを入力" />
+        <button>追加</button>
+      </div>
+      <ul>{/* ここにリストが並ぶ */}</ul>
+    </section>
+  );
+}
+
+Appに配置
+// src/App.tsx
+import { useState } from "react";
+import TodoApp from "./components/TodoApp";
+
+export default function App() {
+  return (
+    <main style={{ fontFamily: "system-ui", padding: 24}}>
+      <h1>小さなアプリ</h1>
+      <TodoApp />
+    </main>
+  );
+}
+
+STEP1 : 入力欄を「制御されたコンポーネント」にする
+目的
+・入力値をstateで管理し、ボタンを押せばその値を使えるようにする。
+
+TodoApp.tsxを変更
+import { useState } from "react";
+
+export default function TodoApp(){
+    const [text, setText] = useState("");
+    return (
+        <section style={{ marginTop: 24 }}>
+            <h2>ToDo</h2>
+            <div style={{ display: "flex", gap: 8 }}>
+                <input
+                 value={text}
+                 onChange={(e) => setText(e.target.value)}
+                 placeholder="やることを入力" 
+                />
+                <button>追加</button>
+            </div>
+            <ul></ul>
+        </section>
+    );
+}
+
+const [text, setText] = useState("");とは？
+・useStateは「現在の値」と「更新関数」の2つを返す関数。
+　戻り値の形はタプルなので、配列の分割代入で受け取る
+配列の分割代入
+通常の書き方
+const arr = [1, 2];
+const x = arr[0];
+const y = arr[1];
+
+分割代入
+const [x, y] = [1, 2];
+
+onChange={(e) => setText(e.target.value)} とは？
+<input>のイベント用props。
+入力が変わった時に呼ばれる関数（イベントハンドラ）を渡している
+アロー関数の学び直し
+普通の関数定義
+function (e){
+    return setText(e,target.value)
+}
+
+アロー関数　
+(e) => setText(e.target.value)
+
+STEP2 : Todo配列のstateを設計する
+目的
+・**配列（複数）+オブジェクト（形）**でタスクを表現する
+
+型と初期値
+import { useState } from "react";
+
+type Todo = { id: number; title: string; done: boolean };
+
+export default function TodoApp(){
+    const [text, setText] = useState("");
+    const [todos, setTodos] = useState<Todo[]>([
+        { id: 1, title: "React を入れる", done: true },
+        { id: 2, title: "UI を作る", done: false},
+    ]);
+
+    return (
+        <section style={{ marginTop: 24 }}>
+            <h2>ToDo</h2>
+            <div style={{ display: "flex", gap: 8 }}>
+                <input
+                 value={text}
+                 onChange={(e) => setText(e.target.value)}
+                 placeholder="やることを入力" 
+                />
+                <button>追加</button>
+            </div>
+            <ul></ul>
+        </section>
+    );
+}
+実務は単純な数値より配列/オブジェクトの更新が中心。
+ここを破壊的に変えない（イミュータブル更新）練習が大事
+
+STEP3 : [追加]機能（Create）
+目的
+・ボタンで配列に新しい要素を追加する。
+
+import { useState } from "react";
+
+type Todo = { id: number; title: string; done: boolean };
+
+export default function TodoApp(){
+    const [text, setText] = useState("");
+    const [todos, setTodos] = useState<Todo[]>([
+        { id: 1, title: "React を入れる", done: true },
+        { id: 2, title: "UI を作る", done: false},
+    ]);
+
+    const add = () => {
+        const title = text.trim();
+        if (!title) return;
+        setTodos((list) => [...list, { id: Date.now(), title, done: false }]);
+        setText("");
+    };
+
+    return (
+        <section style={{ marginTop: 24 }}>
+            <h2>ToDo</h2>
+            <div style={{ display: "flex", gap: 8 }}>
+                <input
+                 value={text}
+                 onChange={(e) => setText(e.target.value)}
+                 placeholder="やることを入力" 
+                />
+                <button onClick={add}>追加</button>
+            </div>
+            <ul></ul>
+        </section>
+    );
+}
+setTodos([...todos, newTodo])のように新しい配列を作って
+渡すのがReactの鉄則。
+todos.push(newTodo)のような破壊的更新はNG(再レンダリングの検知が壊れる原因)
+
+
+
+
+
