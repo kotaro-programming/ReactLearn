@@ -27,7 +27,20 @@ export default function TodoApp(){
                 />
                 <button onClick={add}>追加</button>
             </div>
-            <ul></ul>
+            <ul style={{ paddingLeft: 16 }}>
+                {todos.map((t) => (
+                    <li key={t.id} style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                        <label style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                            <input type="checkbox" checked={t.done} readOnly />
+                            <span style={{ textDecoration: t.done ? "line-through" : "none" }}>
+                                {t.title}
+                            </span>
+                        </label>
+                        <button>削除</button>
+                     </li>
+                ))}
+            </ul>
+
         </section>
     );
 }

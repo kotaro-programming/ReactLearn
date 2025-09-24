@@ -177,6 +177,101 @@ setTodos([...todos, newTodo])のように新しい配列を作って
 渡すのがReactの鉄則。
 todos.push(newTodo)のような破壊的更新はNG(再レンダリングの検知が壊れる原因)
 
+ const [text, setText] = useState("");
+ useStateは二つの値の配列を戻り値として返す
+ ・textは初期値
+ ・setTextを呼ぶと更新される（この場合は、addメソッドで空の文字列を呼び出す）
+
+const [todos, setTodos] = useState<Todo[]>([
+  { id: 1, title: "React を入れる", done: true },
+  { id: 2, title: "UI を作る", done: false },
+]);
+配列を初期値にしたstate
+useState<Todo[]>(...)
+・<Todo[]>はジェネリクス（型パラメータ）
+・このstateはTodo型の配列とTypeScriptに教えている
+初期値としてTodoオブジェクトが2つ入った配列を渡している
+
+setTodos([...todos, { id: 3, title: "新しいタスク", done: false }]);
+todosは配列なので、よくスプレッっど構文を使って新しい配列を作り直して更新する
+
+const add = () => {
+        const title = text.trim();
+        if (!title) return;
+        setTodos((list) => [...list, { id: Date.now(), title, done: false }]);
+        setText("");
+    };
+でなぜtitleに値が入るか？
+const title = text.trim(); は 関数の中で毎回宣言 されているが毎回空文字にならない
+なぜならtextはstateだから
+・textは単なる変数ではなく、Reactが保持しているstateの現在値
+・setText("xxx")を呼ぶとstateが更新され、次の再描画でtextに新しい値が入る
+
+STEP4 : リスト描画（Read）＋key
+目的
+・mapで配列を繰り返し描画し、keyで要素の同一性をReactに伝える。
+
+import { useState } from "react";
+
+type Todo = { id: number; title: string; done: boolean };
+
+export default function TodoApp(){
+    const [text, setText] = useState("");
+    const [todos, setTodos] = useState<Todo[]>([
+        { id: 1, title: "React を入れる", done: true },
+        { id: 2, title: "UI を作る", done: false},
+    ]);
+
+    const add = () => {
+        const title = text.trim();
+        if (!title) return;
+        setTodos((list) => [...list, { id: Date.now(), title, done: false }]);
+        setText("");
+    };
+
+    return (
+        <section style={{ marginTop: 24 }}>
+            <h2>ToDo</h2>
+            <div style={{ display: "flex", gap: 8 }}>
+                <input
+                 value={text}
+                 onChange={(e) => setText(e.target.value)}
+                 placeholder="やることを入力" 
+                />
+                <button onClick={add}>追加</button>
+            </div>
+            <ul style={{ paddingLeft: 16 }}>
+                {todos.map((t) => (
+                    <li key={t.id} style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                        <label style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                            <input type="checkbox" checked={t.done} readOnly />
+                            <span style={{ textDecoration: t.done ? "line-through" : "none" }}>
+                                {t.title}
+                            </span>
+                        </label>
+                        <button>削除</button>
+                     </li>
+                ))}
+            </ul>
+
+        </section>
+    );
+}
+
+
+STEP5：完了切替（Update）
+目的
+・チェックでdoneをトグル（true/false切替）
+
+
+STEP6：削除（Delete）
+目的
+・行の「削除」ボタンで、その要素を配列から除く
+
+
+
+
+
 
 
 
